@@ -1,0 +1,1548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jeffrey Winson Elfrano Limbong - Portfolio</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        retro: {
+                            bg: '#0d1117',
+                            window: '#161b22',
+                            header: '#21262d',
+                            border: '#30363d',
+                            teal: '#00e5ff',
+                            amber: '#ffb703',
+                            pink: '#ff2a6d',
+                            green: '#00f5d4',
+                            text: '#e6edf3',
+                            muted: '#8b949e'
+                        }
+                    },
+                    fontFamily: {
+                        mono: ['"Fira Code"', 'monospace'],
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0d1117;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #30363d;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #00e5ff;
+        }
+
+        .scanline-bg {
+            background: linear-gradient(
+                rgba(18, 16, 16, 0) 50%, 
+                rgba(0, 0, 0, 0.15) 50%
+            ), linear-gradient(
+                90deg,
+                rgba(255, 0, 0, 0.02),
+                rgba(0, 255, 0, 0.01),
+                rgba(0, 0, 255, 0.02)
+            );
+            background-size: 100% 4px, 6px 100%;
+            pointer-events: none;
+        }
+
+        .retro-window {
+            background: #161b22;
+            border: 1px solid #30363d;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .retro-btn {
+            box-shadow: 2px 2px 0px #000;
+            transition: all 0.15s ease;
+        }
+        .retro-btn:active {
+            transform: translate(1px, 1px);
+            box-shadow: 0px 0px 0px #000;
+        }
+
+        .editable-active {
+            outline: 2px dashed #00e5ff !important;
+            outline-offset: 3px;
+            background-color: rgba(0, 229, 255, 0.05);
+            border-radius: 4px;
+            cursor: text;
+        }
+
+        /* Tooltip dotted word styling */
+        .short-expl {
+            border-bottom: 2px dotted #00e5ff;
+            color: #00e5ff;
+            cursor: pointer;
+            position: relative;
+            font-weight: 600;
+            padding-bottom: 1px;
+            transition: all 0.2s ease;
+        }
+        .short-expl:hover {
+            background-color: rgba(0, 229, 255, 0.2);
+            color: #ffffff;
+            border-bottom-color: #ffb703;
+        }
+    </style>
+</head>
+<body class="bg-retro-bg text-retro-text font-sans min-h-screen flex flex-col justify-between selection:bg-retro-teal selection:text-black relative overflow-x-hidden pb-16">
+
+    <!-- Retro Overlay Effect -->
+    <div class="fixed inset-0 scanline-bg z-50 pointer-events-none opacity-20"></div>
+
+    <!-- MANDATORY SAVE / CANCEL BAR FOR OPERATOR MODE -->
+    <div id="operatorSaveBar" class="hidden fixed top-0 inset-x-0 z-[100] bg-retro-amber text-black px-4 py-2 flex flex-wrap items-center justify-between gap-2 shadow-2xl font-mono text-xs font-bold border-b border-black">
+        <div class="flex items-center gap-2">
+            <i class="fa-solid fa-triangle-exclamation text-base animate-bounce"></i>
+            <span>OPERATOR MODE ACTIVE: You can edit texts and data inline. Click 'Save Changes' before returning to Viewer Mode!</span>
+        </div>
+        <div class="flex items-center gap-2">
+            <button onclick="cancelOperatorChanges()" class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded retro-btn text-xs">
+                <i class="fa-solid fa-xmark"></i> Cancel
+            </button>
+            <button onclick="saveOperatorChanges()" class="bg-black hover:bg-gray-800 text-white px-4 py-1 rounded retro-btn text-xs">
+                <i class="fa-solid fa-floppy-disk text-retro-teal"></i> Save Changes
+            </button>
+        </div>
+    </div>
+
+    <!-- TOP HEADER -->
+    <header id="mainHeader" class="bg-retro-header border-b border-retro-border px-4 py-2 flex items-center justify-between z-40 sticky top-0 backdrop-blur-md bg-opacity-90">
+        <div class="flex items-center space-x-2">
+            <span class="w-3 h-3 rounded-full bg-red-500 inline-block"></span>
+            <span class="w-3 h-3 rounded-full bg-yellow-500 inline-block"></span>
+            <span class="w-3 h-3 rounded-full bg-green-500 inline-block"></span>
+            <span class="text-xs font-mono font-bold text-retro-muted ml-2 hidden sm:inline" id="siteTitleNav">Jeffrey Winson Portfolio</span>
+        </div>
+
+        <div class="flex items-center space-x-3 text-xs font-mono">
+            <div id="clockDisplay" class="text-retro-muted">00:00</div>
+
+            <!-- Operator Button -->
+            <button onclick="handleLoginClick()" id="loginBtn" title="Operator Mode" class="retro-btn bg-retro-header text-retro-teal border border-retro-border hover:border-retro-teal p-1.5 rounded flex items-center justify-center">
+                <i class="fa-solid fa-key text-xs" id="loginBtnIcon"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- MAIN CONTAINER -->
+    <div class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 space-y-4 z-10">
+        
+        <!-- NAV TABS -->
+        <nav class="retro-window p-1.5 rounded-lg flex flex-wrap gap-1 border border-retro-border font-mono text-xs sm:text-sm">
+            <button onclick="switchTab('intro')" id="tab-intro" class="nav-tab active-tab flex-1 min-w-[90px] text-center px-3 py-2 rounded-md font-medium transition-all flex items-center justify-center gap-2 bg-retro-header text-retro-teal border border-retro-teal/40">
+                <i class="fa-solid fa-user text-xs"></i>
+                <span>Intro</span>
+            </button>
+
+            <button onclick="switchTab('projects')" id="tab-projects" class="nav-tab flex-1 min-w-[100px] text-center px-3 py-2 rounded-md font-medium text-retro-muted hover:text-white hover:bg-retro-header/60 transition-all flex items-center justify-center gap-2">
+                <i class="fa-solid fa-microchip text-xs"></i>
+                <span>Projects</span>
+            </button>
+
+            <button onclick="switchTab('experiences')" id="tab-experiences" class="nav-tab flex-1 min-w-[120px] text-center px-3 py-2 rounded-md font-medium text-retro-muted hover:text-white hover:bg-retro-header/60 transition-all flex items-center justify-center gap-2">
+                <i class="fa-solid fa-briefcase text-xs"></i>
+                <span>Experiences</span>
+            </button>
+
+            <button onclick="switchTab('contacts')" id="tab-contacts" class="nav-tab flex-1 min-w-[90px] text-center px-3 py-2 rounded-md font-medium text-retro-muted hover:text-white hover:bg-retro-header/60 transition-all flex items-center justify-center gap-2">
+                <i class="fa-solid fa-address-book text-xs"></i>
+                <span>Contacts</span>
+            </button>
+
+            <button onclick="switchTab('additionals')" id="tab-additionals" class="nav-tab flex-1 min-w-[100px] text-center px-3 py-2 rounded-md font-medium text-retro-muted hover:text-white hover:bg-retro-header/60 transition-all flex items-center justify-center gap-2">
+                <i class="fa-solid fa-folder-plus text-xs"></i>
+                <span>Additionals</span>
+            </button>
+        </nav>
+
+        <!-- MAIN CONTENT -->
+        <main class="space-y-4">
+            
+            <!-- TAB 1: INTRO -->
+            <section id="content-intro" class="tab-content block space-y-4">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
+                    
+                    <!-- LEFT COLUMN: PHOTO & SOCIALS -->
+                    <div class="lg:col-span-4 retro-window p-4 rounded-lg flex flex-col justify-between space-y-3 border border-retro-teal/30 min-h-[440px]">
+                        <div class="space-y-3">
+                            <div class="relative w-full aspect-[3/4] rounded-lg overflow-hidden border border-retro-teal/60 bg-retro-header shadow-lg group">
+                                <img id="profileImage" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=800&q=80" alt="Jeffrey Winson Elfrano Limbong" class="w-full h-full object-cover object-top">
+                                
+                                <label for="photoUploadInput" class="operator-only hidden absolute inset-0 bg-black/75 opacity-0 group-hover:opacity-100 flex flex-col items-center justify-center text-white cursor-pointer transition-all border-2 border-dashed border-retro-teal p-3 text-center">
+                                    <i class="fa-solid fa-cloud-arrow-up text-2xl text-retro-teal mb-1"></i>
+                                    <span class="text-xs font-mono font-bold">Change Photo</span>
+                                </label>
+                                <input type="file" id="photoUploadInput" accept="image/*" class="hidden" onchange="handlePhotoUpload(event)">
+                            </div>
+                        </div>
+
+                        <!-- Operator Photo Actions -->
+                        <div class="operator-only hidden pt-2 border-t border-retro-border font-mono text-xs space-y-2">
+                            <div class="flex gap-2">
+                                <label for="photoUploadInput" class="retro-btn bg-retro-teal hover:bg-cyan-300 text-black px-3 py-1.5 font-bold text-[11px] rounded flex-1 text-center cursor-pointer block">
+                                    <i class="fa-solid fa-upload"></i> Upload
+                                </label>
+                                <button onclick="removePhoto()" class="retro-btn bg-red-600 hover:bg-red-700 text-white px-2 py-1.5 font-bold text-[11px] rounded">
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Dynamic Social Buttons Header Bar -->
+                        <div class="pt-2 border-t border-retro-border space-y-2">
+                            <div class="flex items-center justify-between text-[11px] font-mono text-retro-muted">
+                                <span>Social Links</span>
+                                <button onclick="openAddSocialModal()" class="operator-only hidden text-retro-teal hover:underline text-[10px]">
+                                    + Add Social
+                                </button>
+                            </div>
+                            <div id="dynamicIntroSocials" class="flex flex-wrap gap-1.5 text-xs font-mono justify-center">
+                                <!-- Rendered dynamically -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- RIGHT COLUMN: BIO & DETAILS -->
+                    <div class="lg:col-span-8 flex flex-col justify-between space-y-4">
+                        <div class="retro-window p-5 sm:p-6 rounded-lg space-y-3">
+                            <div class="inline-block px-2.5 py-0.5 rounded text-[11px] font-mono bg-retro-teal/10 text-retro-teal border border-retro-teal/30 editable-field" id="editableTitleTag">
+                                Electrical Engineering Technology Undergraduate
+                            </div>
+                            <h1 class="text-2xl sm:text-3xl font-bold font-mono text-white tracking-tight editable-field" id="editableName">
+                                Jeffrey Winson Elfrano Limbong
+                            </h1>
+                            <p class="text-xs sm:text-sm text-retro-amber font-mono italic leading-relaxed editable-field" id="editableQuote">
+                                "Transforming complex problems into elegant, high-impact engineering solutions"
+                            </p>
+                            <div class="pt-3 border-t border-retro-border text-xs font-mono text-retro-muted grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                <div><strong class="text-white">Campus:</strong> <span class="editable-field" id="fieldCampus">$Universitas Gadjah Mada$Top state university in Yogyakarta, Indonesia.$</span></div>
+                                <div><strong class="text-white">Major:</strong> <span class="editable-field" id="fieldMajor">$Teknologi Rekayasa Elektro$Electrical Engineering Technology undergraduate program at UGM.$</span></div>
+                                <div><strong class="text-white">Domicile:</strong> <span class="editable-field" id="fieldDomicile">$Medan$Capital of North Sumatra, major economic & commerce hub.$</span> & <span class="editable-field" id="fieldDomicile2">$Yogyakarta$Renowned educational and cultural city in Indonesia.$</span></div>
+                                <div><strong class="text-white">Status:</strong> <span class="editable-field" id="fieldStatus">Undergraduate Student</span></div>
+                            </div>
+                        </div>
+
+                        <!-- Summary & Focus -->
+                        <div class="retro-window p-5 rounded-lg space-y-2 flex-1">
+                            <div class="flex items-center justify-between border-b border-retro-border pb-2">
+                                <h2 class="text-xs font-mono font-bold text-retro-teal flex items-center gap-2">
+                                    <i class="fa-solid fa-user-gear"></i> <span>Summary & Focus</span>
+                                </h2>
+                            </div>
+                            <div class="text-xs sm:text-sm text-retro-text leading-relaxed editable-field" id="fieldSummary">
+                                Electrical Engineering Technology student at $Universitas Gadjah Mada$, focusing on renewable energy, electrical infrastructure, industrial automation, and Internet of Things (IoT) applications. Driven to apply technical knowledge and critical thinking to engineering projects.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- HARD & SOFT SKILLS -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Hardskills Software Icons -->
+                    <div class="retro-window p-4 rounded-lg space-y-3">
+                        <div class="border-b border-retro-border pb-2 flex justify-between items-center">
+                            <h3 class="text-xs font-mono font-bold text-retro-amber flex items-center gap-2">
+                                <i class="fa-solid fa-code"></i> <span>Hard Skills & Software</span>
+                            </h3>
+                            <button onclick="openAddSkillModal()" class="operator-only hidden text-xs font-mono text-retro-teal hover:underline flex items-center gap-1">
+                                <i class="fa-solid fa-plus"></i> Add Skill
+                            </button>
+                        </div>
+
+                        <div id="hardskillsGrid" class="grid grid-cols-2 sm:grid-cols-3 gap-2 text-xs font-mono">
+                            <!-- Populated dynamically -->
+                        </div>
+                    </div>
+
+                    <!-- Soft Skills -->
+                    <div class="retro-window p-4 rounded-lg space-y-3">
+                        <div class="border-b border-retro-border pb-2">
+                            <h3 class="text-xs font-mono font-bold text-retro-green flex items-center gap-2">
+                                <i class="fa-solid fa-brain"></i> <span>Soft Skills & Competencies</span>
+                            </h3>
+                        </div>
+                        <div class="grid grid-cols-1 gap-2 text-xs font-mono">
+                            <div class="p-2.5 bg-retro-bg rounded border border-retro-border flex items-center gap-2.5">
+                                <i class="fa-solid fa-shield-halved text-retro-teal text-sm"></i>
+                                <div class="editable-field" id="sk1">Adaptive Leadership & Execution</div>
+                            </div>
+                            <div class="p-2.5 bg-retro-bg rounded border border-retro-border flex items-center gap-2.5">
+                                <i class="fa-solid fa-lightbulb text-retro-amber text-sm"></i>
+                                <div class="editable-field" id="sk2">Analytical Innovation & Critical Thinking</div>
+                            </div>
+                            <div class="p-2.5 bg-retro-bg rounded border border-retro-border flex items-center gap-2.5">
+                                <i class="fa-solid fa-users text-retro-pink text-sm"></i>
+                                <div class="editable-field" id="sk3">Teamwork & Technical Communication</div>
+                            </div>
+                            <div class="p-2.5 bg-retro-bg rounded border border-retro-border flex items-center gap-2.5">
+                                <i class="fa-solid fa-clock text-retro-green text-sm"></i>
+                                <div class="editable-field" id="sk4">Project & Time Management</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 2: PROJECTS -->
+            <section id="content-projects" class="tab-content hidden space-y-4">
+                <div class="retro-window p-4 rounded-lg flex items-center justify-between border border-retro-border">
+                    <h2 class="text-sm font-mono font-bold text-retro-teal flex items-center gap-2">
+                        <i class="fa-solid fa-microchip"></i> <span>Projects & Research</span>
+                    </h2>
+
+                    <button onclick="openAddModal('project')" class="operator-only hidden retro-btn bg-retro-teal text-black font-mono font-bold text-xs px-3 py-1.5 rounded flex items-center gap-1.5">
+                        <i class="fa-solid fa-plus"></i> <span>Add Project</span>
+                    </button>
+                </div>
+
+                <div id="projectList" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Dynamic Projects -->
+                </div>
+            </section>
+
+            <!-- TAB 3: EXPERIENCES -->
+            <section id="content-experiences" class="tab-content hidden space-y-4">
+                <div class="retro-window p-4 rounded-lg flex flex-wrap items-center justify-between gap-2 border border-retro-border">
+                    <div class="flex items-center space-x-2">
+                        <button onclick="switchSubTab('ach')" id="subtab-ach" class="px-3 py-1.5 rounded font-mono text-xs font-bold bg-retro-teal text-black">
+                            Achievements
+                        </button>
+                        <button onclick="switchSubTab('cert')" id="subtab-cert" class="px-3 py-1.5 rounded font-mono text-xs text-retro-muted hover:text-white bg-retro-header">
+                            Certificates
+                        </button>
+                    </div>
+
+                    <button onclick="openAddModal('experience')" class="operator-only hidden retro-btn bg-retro-green text-black font-mono font-bold text-xs px-3 py-1.5 rounded flex items-center gap-1.5">
+                        <i class="fa-solid fa-plus"></i> <span>Add Record</span>
+                    </button>
+                </div>
+
+                <div id="subcontent-ach" class="space-y-3"></div>
+                <div id="subcontent-cert" class="space-y-3 hidden"></div>
+            </section>
+
+            <!-- TAB 4: CONTACTS -->
+            <section id="content-contacts" class="tab-content hidden space-y-4">
+                <div class="retro-window p-5 rounded-lg space-y-4">
+                    <div class="flex items-center justify-between border-b border-retro-border pb-2">
+                        <h2 class="text-sm font-mono font-bold text-retro-teal flex items-center gap-2">
+                            <i class="fa-solid fa-address-book"></i> <span>Contacts & Accounts</span>
+                        </h2>
+                        <button onclick="openAddSocialModal()" class="operator-only hidden text-xs font-mono text-retro-teal hover:underline flex items-center gap-1">
+                            <i class="fa-solid fa-plus"></i> Add Social Link
+                        </button>
+                    </div>
+
+                    <div id="contactsGridList" class="grid grid-cols-1 sm:grid-cols-2 gap-3 font-mono text-xs">
+                        <!-- Populated dynamically from appData.socials -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 5: ADDITIONALS (FOLDERS & FILES) -->
+            <section id="content-additionals" class="tab-content hidden space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    
+                    <!-- Guestbook -->
+                    <div class="retro-window p-4 rounded-lg space-y-3">
+                        <div class="border-b border-retro-border pb-2">
+                            <h3 class="text-xs font-mono font-bold text-retro-teal flex items-center gap-2">
+                                <i class="fa-solid fa-comments"></i> Guestbook
+                            </h3>
+                        </div>
+
+                        <form onsubmit="submitGuestbook(event)" class="space-y-2 text-xs font-mono">
+                            <input type="text" id="gbName" placeholder="Your Name" required class="w-full bg-retro-bg border border-retro-border rounded px-2.5 py-1.5 text-white focus:outline-none focus:border-retro-teal">
+                            <textarea id="gbMessage" placeholder="Leave a message..." rows="2" required class="w-full bg-retro-bg border border-retro-border rounded px-2.5 py-1.5 text-white focus:outline-none focus:border-retro-teal"></textarea>
+                            <button type="submit" class="retro-btn bg-retro-teal text-black font-bold px-3 py-1 rounded w-full">
+                                Submit Message
+                            </button>
+                        </form>
+
+                        <div id="guestbookList" class="space-y-2 pt-2 border-t border-retro-border max-h-80 overflow-y-auto">
+                            <!-- Guestbook items -->
+                        </div>
+                    </div>
+
+                    <!-- Additionals Folders & Notes -->
+                    <div class="retro-window p-4 rounded-lg space-y-3">
+                        <div class="border-b border-retro-border pb-2 flex justify-between items-center">
+                            <h3 class="text-xs font-mono font-bold text-retro-amber flex items-center gap-2">
+                                <i class="fa-solid fa-folder-open"></i> Additional Files & Folders
+                            </h3>
+                            <div class="flex items-center gap-2">
+                                <button onclick="openAddFolderModal()" class="operator-only hidden text-xs font-mono text-retro-amber hover:underline flex items-center gap-1">
+                                    <i class="fa-solid fa-folder-plus"></i> Add Folder
+                                </button>
+                                <button onclick="openAddModal('additional')" class="operator-only hidden text-xs font-mono text-retro-teal hover:underline flex items-center gap-1">
+                                    <i class="fa-solid fa-plus"></i> Add File
+                                </button>
+                            </div>
+                        </div>
+
+                        <div id="additionalFoldersList" class="space-y-3 text-xs font-mono">
+                            <!-- Dynamic Folders & Root Files -->
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- MINIMIZABLE SPOTIFY PLAYER -->
+    <div id="spotifyWidget" class="fixed bottom-3 left-3 z-40 flex flex-col items-start space-y-2 max-w-[280px] sm:max-w-xs transition-all duration-300">
+        
+        <!-- Minimized Icon view -->
+        <button id="spotifyMiniBtn" onclick="toggleSpotifyMinimize()" class="hidden retro-btn bg-green-600 hover:bg-green-500 text-black p-3 rounded-full shadow-2xl border border-green-400 flex items-center justify-center animate-pulse">
+            <i class="fa-brands fa-spotify text-2xl text-black"></i>
+        </button>
+
+        <!-- Full Widget View -->
+        <div id="spotifyFullWidget" class="retro-window p-3 rounded-lg w-full border border-retro-border shadow-2xl backdrop-blur-md bg-retro-window/95 space-y-2">
+            <div class="flex items-center justify-between pb-1.5 border-b border-retro-border">
+                <div class="flex items-center space-x-1.5 text-[10px] font-mono text-green-400">
+                    <i class="fa-brands fa-spotify text-xs"></i>
+                    <span class="font-bold tracking-wider">SPOTIFY PLAYER</span>
+                </div>
+
+                <div class="flex items-center gap-2">
+                    <button onclick="toggleSpotifyModeModal()" title="Edit Spotify URL" class="operator-only hidden text-[10px] font-mono text-retro-teal hover:underline flex items-center gap-1">
+                        <i class="fa-solid fa-pen-to-square"></i>
+                    </button>
+                    <button onclick="toggleSpotifyMinimize()" class="text-retro-muted hover:text-white text-xs font-mono">
+                        <i class="fa-solid fa-minus"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div id="spotifyNativePlayer" class="space-y-2">
+                <div class="flex items-center space-x-2.5">
+                    <div class="w-9 h-9 rounded bg-retro-bg border border-retro-border flex items-center justify-center shrink-0 overflow-hidden relative">
+                        <img id="spotifyAlbumArt" src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=150&q=80" alt="Album Art" class="w-full h-full object-cover">
+                    </div>
+                    <div class="flex-1 min-w-0 font-mono">
+                        <div class="text-xs font-bold text-white truncate" id="songTitle">Lofi Study Beats</div>
+                        <div class="text-[10px] text-retro-muted truncate" id="songArtist">Jeffrey's Playlist</div>
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-between pt-1 border-t border-retro-border/50 text-xs">
+                    <button onclick="togglePlayMusic()" class="text-retro-teal hover:text-white">
+                        <i class="fa-solid fa-play" id="playBtnIcon"></i>
+                    </button>
+                    <div class="flex space-x-0.5 items-end h-3">
+                        <span class="w-0.5 bg-retro-teal h-2 animate-bounce"></span>
+                        <span class="w-0.5 bg-retro-teal h-3 animate-bounce" style="animation-delay: 0.1s"></span>
+                        <span class="w-0.5 bg-retro-teal h-1.5 animate-bounce" style="animation-delay: 0.2s"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div id="spotifyIframeContainer" class="hidden rounded overflow-hidden">
+                <iframe id="spotifyIframe" src="" width="100%" height="80" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>
+            </div>
+
+            <audio id="bgAudio" loop src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=lofi-study-112191.mp3"></audio>
+        </div>
+
+        <a id="floatedEmailBtn" href="mailto:jeffreywinsonelfranolimbong@mail.ugm.ac.id" 
+           title="Email Jeffrey" 
+           class="retro-btn bg-red-600 hover:bg-red-500 text-white font-mono text-xs px-3 py-1.5 rounded-full shadow-lg flex items-center space-x-2 border border-red-400">
+            <i class="fa-solid fa-envelope text-xs"></i>
+            <span class="font-bold">Email</span>
+        </a>
+    </div>
+
+    <!-- SPOTIFY EDIT MODAL -->
+    <div id="spotifyModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center hidden p-4">
+        <div class="retro-window max-w-sm w-full p-5 rounded-lg space-y-4 relative border border-green-500/50">
+            <button onclick="toggleSpotifyModeModal()" class="absolute top-3 right-3 text-retro-muted hover:text-white font-mono text-xs">✕</button>
+            <h3 class="text-sm font-mono font-bold text-white text-center">Spotify Settings</h3>
+
+            <div class="bg-retro-bg p-3 rounded border border-retro-border space-y-2 font-mono text-xs">
+                <label class="text-retro-muted block">Paste Spotify Track/Playlist Link:</label>
+                <div class="flex gap-1.5">
+                    <input type="text" id="spotifyUrlInput" placeholder="https://open.spotify.com/track/..." class="flex-1 bg-retro-window border border-retro-border rounded px-2.5 py-1.5 text-white focus:outline-none focus:border-retro-teal">
+                    <button onclick="applySpotifyEmbedLink()" class="retro-btn bg-retro-teal text-black font-bold px-3 py-1.5 rounded">
+                        Set
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- OPERATOR LOGIN MODAL -->
+    <div id="loginModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center hidden p-4">
+        <div class="retro-window max-w-xs w-full p-5 rounded-lg space-y-4 relative border border-retro-amber">
+            <button onclick="toggleLoginModal()" class="absolute top-3 right-3 text-retro-muted hover:text-white text-xs font-mono">✕</button>
+            
+            <div class="text-center space-y-1">
+                <i class="fa-solid fa-key text-retro-amber text-2xl mb-1"></i>
+                <h3 class="text-sm font-mono font-bold text-white">Operator Access</h3>
+                <p class="text-[10px] text-retro-muted">Enter passcode to edit portfolio items</p>
+            </div>
+
+            <div class="space-y-3 pt-1 font-mono text-xs">
+                <div>
+                    <input type="password" id="passInput" onkeydown="handlePasscodeKeyDown(event)" placeholder="Enter passcode" class="w-full bg-retro-bg border border-retro-border rounded px-3 py-1.5 text-white focus:outline-none focus:border-retro-amber">
+                    <p id="loginErrorMsg" class="text-red-500 text-[10px] mt-1 hidden text-center">Password salah!</p>
+                </div>
+                
+                <button onclick="loginWithPasscode()" class="retro-btn w-full bg-retro-amber hover:bg-yellow-400 text-black font-bold py-1.5 rounded">
+                    Enter Mode
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ITEM DETAIL / VIEW MODAL -->
+    <div id="detailModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center hidden p-4">
+        <div class="retro-window max-w-lg w-full p-5 rounded-lg space-y-4 relative border border-retro-teal">
+            <button onclick="closeDetailModal()" class="absolute top-3 right-3 text-retro-muted hover:text-white font-mono text-xs">✕</button>
+            
+            <h3 id="modalDetailTitle" class="text-base font-mono font-bold text-retro-teal">Detail Title</h3>
+            
+            <div id="modalDetailImageContainer" class="hidden rounded border border-retro-border overflow-hidden max-h-56">
+                <img id="modalDetailImage" src="" class="w-full h-full object-cover">
+            </div>
+
+            <div id="modalDetailCodeContainer" class="hidden bg-retro-bg p-3 rounded border border-retro-border font-mono text-xs text-retro-green overflow-x-auto">
+                <pre><code id="modalDetailCode"></code></pre>
+            </div>
+
+            <div id="modalDetailDesc" class="text-xs font-mono text-retro-text leading-relaxed whitespace-pre-line">
+                Description goes here...
+            </div>
+
+            <div id="modalDetailFile" class="hidden pt-2 border-t border-retro-border font-mono text-xs">
+                <!-- Attached File Download -->
+            </div>
+        </div>
+    </div>
+
+    <!-- SHORT EXPLANATION POPOVER MODAL -->
+    <div id="explModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center hidden p-4">
+        <div class="retro-window max-w-xs w-full p-4 rounded-lg space-y-2 relative border border-retro-teal shadow-2xl">
+            <button onclick="closeExplModal()" class="absolute top-2.5 right-2.5 text-retro-muted hover:text-white font-mono text-xs p-1">✕</button>
+            <div class="text-xs font-mono font-bold text-retro-teal flex items-center gap-1.5 border-b border-retro-border pb-1.5">
+                <i class="fa-solid fa-circle-info"></i>
+                <span id="explTitle">Term</span>
+            </div>
+            <p id="explBody" class="text-xs font-mono text-retro-text leading-relaxed pt-1">Explanation text...</p>
+        </div>
+    </div>
+
+    <!-- ADD/EDIT ITEM MODAL -->
+    <div id="addModal" class="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center hidden p-4">
+        <div class="retro-window max-w-md w-full p-5 rounded-lg space-y-3 relative border border-retro-teal max-h-[90vh] overflow-y-auto">
+            <button onclick="closeAddModal()" class="absolute top-3 right-3 text-retro-muted hover:text-white font-mono text-xs">✕</button>
+            <h3 class="text-xs font-mono font-bold text-retro-teal flex items-center gap-2">
+                <i class="fa-solid fa-plus"></i> <span id="addModalTitle">Add Item</span>
+            </h3>
+
+            <form onsubmit="saveNewItem(event)" class="space-y-2.5 text-xs font-mono">
+                <input type="hidden" id="addItemType" value="project">
+                <input type="hidden" id="addItemFolderId" value="">
+                
+                <div>
+                    <label class="text-retro-muted block mb-1">Title / Name:</label>
+                    <input type="text" id="itemTitle" required class="w-full bg-retro-bg border border-retro-border rounded px-3 py-1.5 text-white focus:outline-none focus:border-retro-teal">
+                </div>
+                <div id="categorySelectGroup">
+                    <label class="text-retro-muted block mb-1">Category / Sub-tab:</label>
+                    <select id="itemCategorySelect" class="w-full bg-retro-bg border border-retro-border rounded px-3 py-1.5 text-white focus:outline-none focus:border-retro-teal">
+                        <option value="ach">Achievements</option>
+                        <option value="cert">Certificates</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="text-retro-muted block mb-1">Description (You can use $Word$Explanation$):</label>
+                    <textarea id="itemDesc" rows="3" required class="w-full bg-retro-bg border border-retro-border rounded px-3 py-1.5 text-white focus:outline-none focus:border-retro-teal"></textarea>
+                </div>
+                <div>
+                    <label class="text-retro-muted block mb-1">Code / Snippet (Optional):</label>
+                    <textarea id="itemCode" rows="2" placeholder="c++ or python code..." class="w-full bg-retro-bg border border-retro-border rounded px-3 py-1.5 text-white focus:outline-none focus:border-retro-teal font-mono text-[11px]"></textarea>
+                </div>
+                <div>
+                    <label class="text-retro-muted block mb-1">Illustration Image (Optional):</label>
+                    <input type="file" id="itemImgAttach" accept="image/*" class="w-full bg-retro-bg border border-retro-border rounded px-2 py-1 text-retro-muted text-[11px]">
+                </div>
+                <div>
+                    <label class="text-retro-muted block mb-1">Attach File (Optional):</label>
+                    <input type="file" id="itemFileAttach" class="w-full bg-retro-bg border border-retro-border rounded px-2 py-1 text-retro-muted text-[11px]">
+                </div>
+                <button type="submit" class="retro-btn w-full bg-retro-teal text-black font-bold py-1.5 rounded mt-2">
+                    Save Item
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ADD / EDIT FOLDER MODAL -->
+    <div id="addFolderModal" class="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center hidden p-4">
+        <div class="retro-window max-w-xs w-full p-4 rounded-lg space-y-3 relative border border-retro-amber">
+            <button onclick="closeAddFolderModal()" class="absolute top-3 right-3 text-retro-muted hover:text-white font-mono text-xs">✕</button>
+            <h3 class="text-xs font-mono font-bold text-retro-amber">Add New Folder</h3>
+
+            <form onsubmit="saveNewFolder(event)" class="space-y-2 text-xs font-mono">
+                <div>
+                    <label class="text-retro-muted block mb-1">Folder Name:</label>
+                    <input type="text" id="folderNameInput" required placeholder="Lab Notes, Project Docs..." class="w-full bg-retro-bg border border-retro-border rounded px-2.5 py-1.5 text-white focus:outline-none focus:border-retro-amber">
+                </div>
+                <button type="submit" class="retro-btn w-full bg-retro-amber text-black font-bold py-1.5 rounded mt-2">
+                    Create Folder
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ADD / EDIT SOCIAL MODAL -->
+    <div id="addSocialModal" class="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center hidden p-4">
+        <div class="retro-window max-w-xs w-full p-4 rounded-lg space-y-3 relative border border-retro-teal">
+            <button onclick="closeAddSocialModal()" class="absolute top-3 right-3 text-retro-muted hover:text-white font-mono text-xs">✕</button>
+            <h3 class="text-xs font-mono font-bold text-retro-teal">Add / Edit Social Link</h3>
+
+            <form onsubmit="saveSocialLink(event)" class="space-y-2 text-xs font-mono">
+                <div>
+                    <label class="text-retro-muted block mb-1">Platform Name:</label>
+                    <input type="text" id="socialNameInput" required placeholder="Instagram, GitHub, Email..." class="w-full bg-retro-bg border border-retro-border rounded px-2.5 py-1.5 text-white focus:outline-none focus:border-retro-teal">
+                </div>
+                <div>
+                    <label class="text-retro-muted block mb-1">Link URL (Website):</label>
+                    <input type="url" id="socialUrlInput" required placeholder="https://..." class="w-full bg-retro-bg border border-retro-border rounded px-2.5 py-1.5 text-white focus:outline-none focus:border-retro-teal">
+                </div>
+                <div>
+                    <label class="text-retro-muted block mb-1">Icon Class (FontAwesome) OR Upload Image:</label>
+                    <input type="text" id="socialIconInput" placeholder="fa-brands fa-github" class="w-full bg-retro-bg border border-retro-border rounded px-2.5 py-1.5 text-white focus:outline-none focus:border-retro-teal mb-1">
+                    <input type="file" id="socialImgFileInput" accept="image/*" class="w-full bg-retro-bg border border-retro-border rounded px-2 py-1 text-retro-muted text-[11px]">
+                </div>
+                <button type="submit" class="retro-btn w-full bg-retro-teal text-black font-bold py-1.5 rounded mt-2">
+                    Save Social
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ADD SKILL MODAL -->
+    <div id="addSkillModal" class="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center hidden p-4">
+        <div class="retro-window max-w-xs w-full p-4 rounded-lg space-y-3 relative border border-retro-amber">
+            <button onclick="closeAddSkillModal()" class="absolute top-3 right-3 text-retro-muted hover:text-white font-mono text-xs">✕</button>
+            <h3 class="text-xs font-mono font-bold text-retro-amber">Add Hardskill / Software Logo</h3>
+
+            <form onsubmit="saveNewSkill(event)" class="space-y-2 text-xs font-mono">
+                <div>
+                    <label class="text-retro-muted block mb-1">Software / Tech Name:</label>
+                    <input type="text" id="skillName" required placeholder="Python, C++, Proteus..." class="w-full bg-retro-bg border border-retro-border rounded px-2.5 py-1.5 text-white focus:outline-none focus:border-retro-amber">
+                </div>
+                <div>
+                    <label class="text-retro-muted block mb-1">Icon FontAwesome Class OR Upload Image:</label>
+                    <input type="text" id="skillIcon" placeholder="fa-brands fa-python" class="w-full bg-retro-bg border border-retro-border rounded px-2.5 py-1.5 text-white focus:outline-none focus:border-retro-amber mb-1">
+                    <input type="file" id="skillImgFileInput" accept="image/*" class="w-full bg-retro-bg border border-retro-border rounded px-2 py-1 text-retro-muted text-[11px]">
+                </div>
+                <button type="submit" class="retro-btn w-full bg-retro-amber text-black font-bold py-1.5 rounded mt-2">
+                    Add Hardskill
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT APP LOGIC -->
+    <script>
+        // --- DATA & STATE MANAGEMENT ---
+        let isOperator = false;
+        let isPlaying = false;
+        let isSpotifyMinimized = false;
+
+        // Default Portfolio Data State
+        const defaultData = {
+            profileImg: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=800&q=80",
+            editableTitleTag: "Electrical Engineering Technology Undergraduate",
+            editableName: "Jeffrey Winson Elfrano Limbong",
+            editableQuote: '"Transforming complex problems into elegant, high-impact engineering solutions"',
+            fieldCampus: "($Universitas Gadjah Mada$Top state university in Yogyakarta, Indonesia.$)",
+            fieldMajor: "($Teknologi Rekayasa Elektro$Electrical Engineering Technology undergraduate program at UGM.$)",
+            fieldDomicile: "($Medan$Capital of North Sumatra, major economic & commerce hub.$)",
+            fieldDomicile2: "($Yogyakarta$Renowned educational and cultural city in Indonesia.$)",
+            fieldStatus: "Undergraduate Student",
+            fieldSummary: "Electrical Engineering Technology student at ($Universitas Gadjah Mada$Top state university in Indonesia$), focusing on renewable energy, electrical infrastructure, industrial automation, and Internet of Things (IoT) applications. Driven to apply technical knowledge and critical thinking to engineering projects.",
+            socials: [
+                { id: 1, name: "Instagram", url: "https://instagram.com/jatiwins", icon: "fa-brands fa-instagram", customImg: null },
+                { id: 2, name: "UGM Email", url: "mailto:jeffreywinsonelfranolimbong@mail.ugm.ac.id", icon: "fa-solid fa-envelope", customImg: null },
+                { id: 3, name: "WhatsApp", url: "https://wa.me/6288971359324", icon: "fa-brands fa-whatsapp", customImg: null },
+                { id: 4, name: "LinkedIn", url: "https://linkedin.com", icon: "fa-brands fa-linkedin", customImg: null }
+            ],
+            sk1: "Adaptive Leadership & Execution",
+            sk2: "Analytical Innovation & Critical Thinking",
+            sk3: "Teamwork & Technical Communication",
+            sk4: "Project & Time Management",
+            hardskills: [
+                { id: 1, name: "Python 3", icon: "fa-brands fa-python", customImg: null },
+                { id: 2, name: "C++ / Embedded", icon: "fa-solid fa-microchip", customImg: null },
+                { id: 3, name: "Proteus", icon: "fa-solid fa-wave-square", customImg: null },
+                { id: 4, name: "MATLAB", icon: "fa-solid fa-calculator", customImg: null },
+                { id: 5, name: "HTML5 / CSS3", icon: "fa-brands fa-html5", customImg: null },
+                { id: 6, name: "Git & GitHub", icon: "fa-brands fa-github", customImg: null }
+            ],
+            projects: [],
+            experiences: [],
+            guestbook: [],
+            folders: [
+                { id: 101, name: "Lab Notes & Circuit Simulations", expanded: true }
+            ],
+            additionals: [
+                { id: 1001, folderId: 101, title: "AC/DC Signal Measurements Note", desc: "Notes on waveform analysis at ($Universitas Gadjah Mada$UGM Lab$) using digital oscilloscopes.", code: "// Sample test signal script\nvoid setup() {\n  Serial.begin(9600);\n}", fileName: "lab_report_v1.pdf" }
+            ]
+        };
+
+        let appData = JSON.parse(localStorage.getItem('jeffrey_portfolio_data')) || defaultData;
+
+        // --- INITIALIZATION ---
+        window.onload = function() {
+            renderAllData();
+            updateClock();
+            setInterval(updateClock, 1000);
+        };
+
+        function updateClock() {
+            const now = new Date();
+            document.getElementById('clockDisplay').textContent = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        }
+
+        // --- TOOLTIP SYNTAX PARSER: ($Word$Explanation$) OR $Word$Explanation$ ---
+        function parseShortExpl(str) {
+            if (!str) return '';
+            
+            // Matches ($Word$Explanation$) or $Word$Explanation$
+            const regex = /(?:\(\$|\$)([^$]+)\$([^$]+)(?:\$\)|\$)/g;
+            
+            return str.replace(regex, (match, word, expl) => {
+                const cleanWord = word.trim();
+                const cleanExpl = expl.trim().replace(/'/g, "\\'").replace(/"/g, "&quot;");
+                return `<span class="short-expl" onclick="event.stopPropagation(); showExpl('${cleanWord}', '${cleanExpl}')" title="Click for details: ${cleanWord}">${cleanWord}</span>`;
+            });
+        }
+
+        function showExpl(word, expl) {
+            document.getElementById('explTitle').innerText = word;
+            document.getElementById('explBody').innerText = expl;
+            document.getElementById('explModal').classList.remove('hidden');
+        }
+
+        function closeExplModal() {
+            document.getElementById('explModal').classList.add('hidden');
+        }
+
+        // Helper to bind editable field data correctly
+        function setFieldValue(elementId, value) {
+            const el = document.getElementById(elementId);
+            if (!el) return;
+            
+            if (isOperator) {
+                el.innerText = value || '';
+            } else {
+                el.innerHTML = parseShortExpl(value || '');
+            }
+        }
+
+        // --- RENDER ALL DATA ---
+        function renderAllData() {
+            document.getElementById('profileImage').src = appData.profileImg || defaultData.profileImg;
+            document.getElementById('editableTitleTag').innerText = appData.editableTitleTag || defaultData.editableTitleTag;
+            document.getElementById('editableName').innerText = appData.editableName || defaultData.editableName;
+            document.getElementById('editableQuote').innerText = appData.editableQuote || defaultData.editableQuote;
+
+            setFieldValue('fieldCampus', appData.fieldCampus);
+            setFieldValue('fieldMajor', appData.fieldMajor);
+            setFieldValue('fieldDomicile', appData.fieldDomicile);
+            setFieldValue('fieldDomicile2', appData.fieldDomicile2);
+            document.getElementById('fieldStatus').innerText = appData.fieldStatus || 'Undergraduate Student';
+            setFieldValue('fieldSummary', appData.fieldSummary);
+
+            document.getElementById('sk1').innerText = appData.sk1 || defaultData.sk1;
+            document.getElementById('sk2').innerText = appData.sk2 || defaultData.sk2;
+            document.getElementById('sk3').innerText = appData.sk3 || defaultData.sk3;
+            document.getElementById('sk4').innerText = appData.sk4 || defaultData.sk4;
+
+            renderSocials();
+            renderHardskills();
+            renderProjects();
+            renderExperiences();
+            renderGuestbook();
+            renderAdditionals();
+        }
+
+        // --- SOCIALS RENDERER ---
+        function renderSocials() {
+            const introContainer = document.getElementById('dynamicIntroSocials');
+            const contactsGrid = document.getElementById('contactsGridList');
+            
+            introContainer.innerHTML = '';
+            contactsGrid.innerHTML = '';
+
+            (appData.socials || []).forEach(soc => {
+                // Intro pill
+                const introPill = document.createElement('a');
+                introPill.href = soc.url;
+                introPill.target = "_blank";
+                introPill.className = "px-2.5 py-1 rounded bg-retro-bg border border-retro-border hover:border-retro-teal text-retro-teal flex items-center gap-1.5 text-[11px] group relative";
+                
+                let iconMarkup = soc.customImg 
+                    ? `<img src="${soc.customImg}" class="w-3.5 h-3.5 object-contain rounded-sm inline-block">`
+                    : `<i class="${soc.icon || 'fa-solid fa-link'}"></i>`;
+
+                introPill.innerHTML = `
+                    ${iconMarkup} <span>${soc.name}</span>
+                    ${isOperator ? `<button onclick="deleteSocial(event, ${soc.id})" class="text-red-500 hover:text-red-400 font-bold ml-1 text-[10px]">✕</button>` : ''}
+                `;
+                introContainer.appendChild(introPill);
+
+                // Contacts tab card
+                const contactCard = document.createElement('div');
+                contactCard.className = "p-3 bg-retro-bg rounded border border-retro-border flex items-center justify-between gap-3 group";
+                contactCard.innerHTML = `
+                    <a href="${soc.url}" target="_blank" class="flex items-center gap-3 overflow-hidden flex-1 hover:text-retro-teal">
+                        <div class="w-6 h-6 flex items-center justify-center text-lg shrink-0">
+                            ${iconMarkup}
+                        </div>
+                        <div class="truncate">
+                            <div class="text-retro-muted text-[10px] uppercase font-bold">${soc.name}</div>
+                            <div class="text-white font-bold truncate text-xs">${soc.url}</div>
+                        </div>
+                    </a>
+                    ${isOperator ? `<button onclick="deleteSocial(event, ${soc.id})" class="text-red-500 hover:text-red-400 font-bold text-xs p-1">✕</button>` : ''}
+                `;
+                contactsGrid.appendChild(contactCard);
+            });
+        }
+
+        function renderHardskills() {
+            const grid = document.getElementById('hardskillsGrid');
+            grid.innerHTML = '';
+            (appData.hardskills || []).forEach(skill => {
+                const card = document.createElement('div');
+                card.className = "p-2 bg-retro-bg rounded border border-retro-border flex items-center justify-between gap-2";
+                
+                let iconMarkup = skill.customImg 
+                    ? `<img src="${skill.customImg}" class="w-4 h-4 object-contain rounded-sm shrink-0">`
+                    : `<i class="${skill.icon || 'fa-solid fa-code'} text-retro-teal text-base shrink-0"></i>`;
+
+                card.innerHTML = `
+                    <div class="flex items-center gap-2 overflow-hidden">
+                        ${iconMarkup}
+                        <span class="truncate font-bold text-white text-[11px]">${skill.name}</span>
+                    </div>
+                    ${isOperator ? `<button onclick="deleteSkill(${skill.id})" class="text-red-500 hover:text-red-400 text-xs px-1">✕</button>` : ''}
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function renderProjects() {
+            const container = document.getElementById('projectList');
+            container.innerHTML = '';
+
+            if (!appData.projects || appData.projects.length === 0) {
+                container.innerHTML = `<div class="col-span-full retro-window p-8 text-center text-xs font-mono text-retro-muted">No projects added yet.</div>`;
+                return;
+            }
+
+            appData.projects.forEach(p => {
+                const card = document.createElement('div');
+                card.className = "retro-window p-4 rounded border border-retro-border space-y-2 hover:border-retro-teal/60 transition-colors cursor-pointer relative";
+                card.onclick = (e) => {
+                    if (e.target.closest('.del-btn') || e.target.closest('.short-expl')) return;
+                    openDetailModal(p);
+                };
+
+                card.innerHTML = `
+                    ${isOperator ? `<button onclick="deleteProject(${p.id})" class="del-btn absolute top-3 right-3 text-red-500 hover:text-red-400 font-bold text-xs p-1">✕</button>` : ''}
+                    <h3 class="font-bold text-sm text-white font-mono pr-6">${p.title}</h3>
+                    <p class="text-xs text-retro-muted line-clamp-2">${parseShortExpl(p.desc)}</p>
+                    <div class="flex items-center gap-2 pt-2 text-[11px] text-retro-teal font-mono">
+                        <span><i class="fa-solid fa-eye"></i> Click for details</span>
+                        ${p.code ? '<i class="fa-solid fa-code text-retro-amber"></i>' : ''}
+                        ${p.image ? '<i class="fa-solid fa-image text-retro-green"></i>' : ''}
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function renderExperiences() {
+            const achContainer = document.getElementById('subcontent-ach');
+            const certContainer = document.getElementById('subcontent-cert');
+            achContainer.innerHTML = '';
+            certContainer.innerHTML = '';
+
+            const achList = (appData.experiences || []).filter(e => e.category === 'ach');
+            const certList = (appData.experiences || []).filter(e => e.category === 'cert');
+
+            if (achList.length === 0) achContainer.innerHTML = '<div class="retro-window p-4 text-xs font-mono text-retro-muted">No achievements listed.</div>';
+            if (certList.length === 0) certContainer.innerHTML = '<div class="retro-window p-4 text-xs font-mono text-retro-muted">No certificates listed.</div>';
+
+            const renderExpItem = (item, container, colorClass, iconClass) => {
+                const card = document.createElement('div');
+                card.className = "retro-window p-4 rounded border border-retro-border flex items-start gap-3 hover:border-retro-teal/60 transition-colors cursor-pointer relative";
+                card.onclick = (e) => {
+                    if (e.target.closest('.del-btn') || e.target.closest('.short-expl')) return;
+                    openDetailModal(item);
+                };
+
+                card.innerHTML = `
+                    <div class="p-2 ${colorClass} rounded text-base shrink-0">
+                        <i class="${iconClass}"></i>
+                    </div>
+                    <div class="flex-1 pr-6">
+                        <h3 class="font-bold text-sm text-white font-mono">${item.title}</h3>
+                        <p class="text-xs text-retro-muted mt-0.5 line-clamp-2">${parseShortExpl(item.desc)}</p>
+                    </div>
+                    ${isOperator ? `<button onclick="deleteExperience(${item.id})" class="del-btn absolute top-3 right-3 text-red-500 hover:text-red-400 font-bold text-xs p-1">✕</button>` : ''}
+                `;
+                container.appendChild(card);
+            };
+
+            achList.forEach(item => renderExpItem(item, achContainer, 'bg-retro-amber/10 text-retro-amber border border-retro-amber/20', 'fa-solid fa-trophy'));
+            certList.forEach(item => renderExpItem(item, certContainer, 'bg-retro-green/10 text-retro-green border border-retro-green/20', 'fa-solid fa-certificate'));
+        }
+
+        function renderGuestbook() {
+            const list = document.getElementById('guestbookList');
+            list.innerHTML = '';
+
+            if (!appData.guestbook || appData.guestbook.length === 0) {
+                list.innerHTML = `<div class="p-3 text-xs font-mono text-retro-muted text-center">No messages in guestbook.</div>`;
+                return;
+            }
+
+            appData.guestbook.forEach(gb => {
+                const entry = document.createElement('div');
+                entry.className = "retro-window p-2.5 rounded text-xs space-y-1 relative";
+                entry.innerHTML = `
+                    <div class="flex justify-between text-retro-muted font-mono text-[11px]">
+                        <span class="font-bold text-retro-teal">${gb.name}</span>
+                        <span>${gb.time}</span>
+                    </div>
+                    <p class="text-retro-text">${parseShortExpl(gb.message)}</p>
+
+                    ${gb.reply ? `
+                        <div class="mt-2 pl-3 border-l-2 border-retro-amber bg-retro-bg/50 p-1.5 rounded space-y-0.5">
+                            <div class="text-[10px] font-bold text-retro-amber font-mono">Jeffrey:</div>
+                            <p class="text-[11px] text-white">${parseShortExpl(gb.reply)}</p>
+                        </div>
+                    ` : ''}
+
+                    <div class="flex gap-2 pt-1 font-mono text-[10px]">
+                        ${isOperator && !gb.reply ? `<button onclick="replyGuestbook(${gb.id})" class="text-retro-amber hover:underline"><i class="fa-solid fa-reply"></i> Reply</button>` : ''}
+                        ${isOperator ? `<button onclick="deleteGuestbook(${gb.id})" class="text-red-500 hover:underline"><i class="fa-solid fa-trash"></i> Delete</button>` : ''}
+                    </div>
+                `;
+                list.appendChild(entry);
+            });
+        }
+
+        // --- FOLDERS & ADDITIONALS RENDERER ---
+        function renderAdditionals() {
+            const container = document.getElementById('additionalFoldersList');
+            container.innerHTML = '';
+
+            const folders = appData.folders || [];
+            const files = appData.additionals || [];
+
+            if (folders.length === 0 && files.length === 0) {
+                container.innerHTML = `<div class="p-3 text-xs font-mono text-retro-muted text-center">No folders or additional files added yet.</div>`;
+                return;
+            }
+
+            // Render Folders
+            folders.forEach(f => {
+                const folderCard = document.createElement('div');
+                folderCard.className = "retro-window rounded border border-retro-border overflow-hidden";
+                
+                const folderFiles = files.filter(file => file.folderId == f.id);
+
+                folderCard.innerHTML = `
+                    <div class="p-2.5 bg-retro-header flex items-center justify-between cursor-pointer border-b border-retro-border/50" onclick="toggleFolderExpand(${f.id})">
+                        <div class="flex items-center gap-2 font-bold text-retro-amber">
+                            <i class="fa-solid ${f.expanded ? 'fa-folder-open text-retro-amber' : 'fa-folder text-retro-amber'}"></i>
+                            <span>${f.name}</span>
+                            <span class="text-[10px] text-retro-muted font-normal">(${folderFiles.length} items)</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            ${isOperator ? `<button onclick="event.stopPropagation(); openAddModal('additional', ${f.id})" class="text-[10px] text-retro-teal hover:underline"><i class="fa-solid fa-plus"></i> Add File</button>` : ''}
+                            ${isOperator ? `<button onclick="event.stopPropagation(); deleteFolder(${f.id})" class="text-red-500 hover:text-red-400 font-bold text-xs p-1">✕</button>` : ''}
+                            <i class="fa-solid fa-chevron-${f.expanded ? 'up' : 'down'} text-retro-muted text-xs ml-1"></i>
+                        </div>
+                    </div>
+                    <div class="${f.expanded ? 'block' : 'hidden'} p-2 space-y-2 bg-retro-bg/40">
+                        ${folderFiles.length === 0 ? '<div class="text-[11px] text-retro-muted italic p-2">Empty folder</div>' : ''}
+                        ${folderFiles.map(item => `
+                            <div class="p-2 bg-retro-window rounded border border-retro-border hover:border-retro-amber/60 cursor-pointer flex items-center justify-between gap-2" onclick="openDetailModalById(${item.id})">
+                                <div class="overflow-hidden">
+                                    <div class="font-bold text-white text-xs truncate">${item.title}</div>
+                                    <p class="text-retro-muted text-[10px] truncate">${parseShortExpl(item.desc)}</p>
+                                </div>
+                                ${isOperator ? `<button onclick="event.stopPropagation(); deleteAdditional(${item.id})" class="text-red-500 hover:text-red-400 text-xs px-1">✕</button>` : ''}
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+                container.appendChild(folderCard);
+            });
+
+            // Render Unfoldered (Root) files
+            const rootFiles = files.filter(file => !file.folderId);
+            if (rootFiles.length > 0) {
+                const rootGroup = document.createElement('div');
+                rootGroup.className = "pt-2 space-y-2 border-t border-retro-border/40";
+                rootGroup.innerHTML = `<div class="text-[10px] text-retro-muted uppercase font-bold">Unsorted Files</div>`;
+                
+                rootFiles.forEach(f => {
+                    const card = document.createElement('div');
+                    card.className = "p-2.5 bg-retro-bg rounded border border-retro-border space-y-1 relative cursor-pointer hover:border-retro-amber/60 flex items-center justify-between";
+                    card.onclick = (e) => {
+                        if (e.target.closest('.del-btn') || e.target.closest('.short-expl')) return;
+                        openDetailModal(f);
+                    };
+
+                    card.innerHTML = `
+                        <div class="pr-6 overflow-hidden">
+                            <div class="font-bold text-white text-xs truncate">${f.title}</div>
+                            <p class="text-retro-muted text-[10px] line-clamp-1">${parseShortExpl(f.desc)}</p>
+                        </div>
+                        ${isOperator ? `<button onclick="deleteAdditional(${f.id})" class="del-btn text-red-500 hover:text-red-400 font-bold text-xs p-1">✕</button>` : ''}
+                    `;
+                    rootGroup.appendChild(card);
+                });
+                container.appendChild(rootGroup);
+            }
+        }
+
+        function toggleFolderExpand(folderId) {
+            const folder = (appData.folders || []).find(f => f.id === folderId);
+            if (folder) {
+                folder.expanded = !folder.expanded;
+                renderAdditionals();
+            }
+        }
+
+        function openDetailModalById(id) {
+            const item = (appData.additionals || []).find(i => i.id === id);
+            if (item) openDetailModal(item);
+        }
+
+        // --- OPERATOR MODE & PERSISTENCE ---
+        function handleLoginClick() {
+            if (isOperator) {
+                alert("Operator Mode is active. Click 'Save Changes' or 'Cancel' on top bar to switch back.");
+            } else {
+                toggleLoginModal();
+            }
+        }
+
+        function toggleLoginModal() {
+            const modal = document.getElementById('loginModal');
+            modal.classList.toggle('hidden');
+            document.getElementById('passInput').value = '';
+            document.getElementById('loginErrorMsg').classList.add('hidden');
+        }
+
+        function handlePasscodeKeyDown(e) {
+            if (e.key === 'Enter') {
+                loginWithPasscode();
+            }
+        }
+
+        function loginWithPasscode() {
+            const passInput = document.getElementById('passInput');
+            const errorMsg = document.getElementById('loginErrorMsg');
+            
+            // Password Login khusus
+            if (passInput.value === '1awalkOde8jkAja') {
+                errorMsg.classList.add('hidden');
+                passInput.value = '';
+                enableOperatorMode();
+                toggleLoginModal();
+            } else {
+                errorMsg.classList.remove('hidden');
+                passInput.value = '';
+            }
+        }
+
+        function enableOperatorMode() {
+            isOperator = true;
+            document.getElementById('loginBtnIcon').className = "fa-solid fa-user-check text-retro-green";
+            document.querySelectorAll('.operator-only').forEach(el => el.classList.remove('hidden'));
+            document.getElementById('operatorSaveBar').classList.remove('hidden');
+
+            document.querySelectorAll('.editable-field').forEach(el => {
+                el.contentEditable = "true";
+                el.classList.add('editable-active');
+            });
+
+            renderAllData();
+        }
+
+        function saveOperatorChanges() {
+            appData.editableTitleTag = document.getElementById('editableTitleTag').innerText.trim();
+            appData.editableName = document.getElementById('editableName').innerText.trim();
+            appData.editableQuote = document.getElementById('editableQuote').innerText.trim();
+            
+            appData.fieldCampus = document.getElementById('fieldCampus').innerText.trim();
+            appData.fieldMajor = document.getElementById('fieldMajor').innerText.trim();
+            appData.fieldDomicile = document.getElementById('fieldDomicile').innerText.trim();
+            appData.fieldDomicile2 = document.getElementById('fieldDomicile2').innerText.trim();
+            appData.fieldStatus = document.getElementById('fieldStatus').innerText.trim();
+            appData.fieldSummary = document.getElementById('fieldSummary').innerText.trim();
+
+            appData.sk1 = document.getElementById('sk1').innerText.trim();
+            appData.sk2 = document.getElementById('sk2').innerText.trim();
+            appData.sk3 = document.getElementById('sk3').innerText.trim();
+            appData.sk4 = document.getElementById('sk4').innerText.trim();
+
+            localStorage.setItem('jeffrey_portfolio_data', JSON.stringify(appData));
+            disableOperatorMode();
+            alert("All portfolio changes saved successfully!");
+        }
+
+        function cancelOperatorChanges() {
+            appData = JSON.parse(localStorage.getItem('jeffrey_portfolio_data')) || defaultData;
+            disableOperatorMode();
+        }
+
+        function disableOperatorMode() {
+            isOperator = false;
+            document.getElementById('loginBtnIcon').className = "fa-solid fa-key text-retro-teal";
+            document.querySelectorAll('.operator-only').forEach(el => el.classList.add('hidden'));
+            document.getElementById('operatorSaveBar').classList.add('hidden');
+
+            document.querySelectorAll('.editable-field').forEach(el => {
+                el.contentEditable = "false";
+                el.classList.remove('editable-active');
+            });
+
+            renderAllData();
+        }
+
+        // --- TAB SWITCHING ---
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.nav-tab').forEach(el => {
+                el.className = "nav-tab flex-1 min-w-[90px] text-center px-3 py-2 rounded-md font-medium text-retro-muted hover:text-white hover:bg-retro-header/60 transition-all flex items-center justify-center gap-2";
+            });
+
+            document.getElementById(`content-${tabId}`).classList.remove('hidden');
+            const activeNav = document.getElementById(`tab-${tabId}`);
+            if(activeNav) {
+                activeNav.className = "nav-tab flex-1 min-w-[90px] text-center px-3 py-2 rounded-md font-medium transition-all flex items-center justify-center gap-2 bg-retro-header text-retro-teal border border-retro-teal/40";
+            }
+        }
+
+        function switchSubTab(sub) {
+            document.getElementById('subcontent-ach').classList.toggle('hidden', sub !== 'ach');
+            document.getElementById('subcontent-cert').classList.toggle('hidden', sub !== 'cert');
+
+            const achBtn = document.getElementById('subtab-ach');
+            const certBtn = document.getElementById('subtab-cert');
+
+            if (sub === 'ach') {
+                achBtn.className = "px-3 py-1.5 rounded font-mono text-xs font-bold bg-retro-teal text-black";
+                certBtn.className = "px-3 py-1.5 rounded font-mono text-xs text-retro-muted hover:text-white bg-retro-header";
+            } else {
+                certBtn.className = "px-3 py-1.5 rounded font-mono text-xs font-bold bg-retro-green text-black";
+                achBtn.className = "px-3 py-1.5 rounded font-mono text-xs text-retro-muted hover:text-white bg-retro-header";
+            }
+        }
+
+        // --- PHOTO / IMAGE UPLOAD ---
+        function handlePhotoUpload(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(evt) {
+                    appData.profileImg = evt.target.result;
+                    document.getElementById('profileImage').src = evt.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function removePhoto() {
+            appData.profileImg = defaultData.profileImg;
+            document.getElementById('profileImage').src = defaultData.profileImg;
+        }
+
+        // --- SPOTIFY CONTROLS ---
+        function toggleSpotifyMinimize() {
+            isSpotifyMinimized = !isSpotifyMinimized;
+            document.getElementById('spotifyFullWidget').classList.toggle('hidden', isSpotifyMinimized);
+            document.getElementById('spotifyMiniBtn').classList.toggle('hidden', !isSpotifyMinimized);
+        }
+
+        function toggleSpotifyModeModal() {
+            document.getElementById('spotifyModal').classList.toggle('hidden');
+        }
+
+        function applySpotifyEmbedLink() {
+            const input = document.getElementById('spotifyUrlInput').value.trim();
+            if (!input) return;
+
+            let embedUrl = input;
+            if (input.includes('spotify.com')) {
+                embedUrl = input.replace('open.spotify.com/', 'open.spotify.com/embed/');
+            }
+
+            document.getElementById('spotifyNativePlayer').classList.add('hidden');
+            const iframeContainer = document.getElementById('spotifyIframeContainer');
+            const iframe = document.getElementById('spotifyIframe');
+            
+            iframe.src = embedUrl;
+            iframeContainer.classList.remove('hidden');
+            toggleSpotifyModeModal();
+        }
+
+        function togglePlayMusic() {
+            const audio = document.getElementById('bgAudio');
+            const icon = document.getElementById('playBtnIcon');
+
+            if (isPlaying) {
+                audio.pause();
+                icon.className = "fa-solid fa-play";
+            } else {
+                audio.play().then(() => {
+                    icon.className = "fa-solid fa-pause";
+                }).catch(e => console.log(e));
+            }
+            isPlaying = !isPlaying;
+        }
+
+        // --- DETAIL MODAL ---
+        function openDetailModal(item) {
+            document.getElementById('modalDetailTitle').innerText = item.title;
+            document.getElementById('modalDetailDesc').innerHTML = parseShortExpl(item.desc);
+
+            const imgCont = document.getElementById('modalDetailImageContainer');
+            if (item.image) {
+                document.getElementById('modalDetailImage').src = item.image;
+                imgCont.classList.remove('hidden');
+            } else {
+                imgCont.classList.add('hidden');
+            }
+
+            const codeCont = document.getElementById('modalDetailCodeContainer');
+            if (item.code) {
+                document.getElementById('modalDetailCode').innerText = item.code;
+                codeCont.classList.remove('hidden');
+            } else {
+                codeCont.classList.add('hidden');
+            }
+
+            const fileCont = document.getElementById('modalDetailFile');
+            if (item.fileUrl && item.fileName) {
+                fileCont.innerHTML = `<a href="${item.fileUrl}" download="${item.fileName}" class="inline-flex items-center gap-1.5 text-retro-teal hover:underline font-bold"><i class="fa-solid fa-paperclip"></i> Download Attachment (${item.fileName})</a>`;
+                fileCont.classList.remove('hidden');
+            } else {
+                fileCont.classList.add('hidden');
+            }
+
+            document.getElementById('detailModal').classList.remove('hidden');
+        }
+
+        function closeDetailModal() {
+            document.getElementById('detailModal').classList.add('hidden');
+        }
+
+        // --- MODAL HANDLERS FOR ITEMS, FOLDERS, SOCIALS ---
+        function openAddFolderModal() {
+            document.getElementById('addFolderModal').classList.remove('hidden');
+        }
+
+        function closeAddFolderModal() {
+            document.getElementById('addFolderModal').classList.add('hidden');
+        }
+
+        function saveNewFolder(e) {
+            e.preventDefault();
+            const name = document.getElementById('folderNameInput').value.trim();
+            if (name) {
+                appData.folders = appData.folders || [];
+                appData.folders.push({ id: Date.now(), name, expanded: true });
+                renderAdditionals();
+                closeAddFolderModal();
+                document.getElementById('folderNameInput').value = '';
+            }
+        }
+
+        function deleteFolder(folderId) {
+            if (confirm("Delete this folder and all files inside?")) {
+                appData.folders = (appData.folders || []).filter(f => f.id !== folderId);
+                appData.additionals = (appData.additionals || []).filter(a => a.folderId != folderId);
+                renderAdditionals();
+            }
+        }
+
+        function openAddSocialModal() {
+            document.getElementById('addSocialModal').classList.remove('hidden');
+        }
+
+        function closeAddSocialModal() {
+            document.getElementById('addSocialModal').classList.add('hidden');
+        }
+
+        function saveSocialLink(e) {
+            e.preventDefault();
+            const name = document.getElementById('socialNameInput').value;
+            const url = document.getElementById('socialUrlInput').value;
+            const icon = document.getElementById('socialIconInput').value;
+            const imgFile = document.getElementById('socialImgFileInput');
+
+            const newSocial = {
+                id: Date.now(),
+                name,
+                url,
+                icon: icon || "fa-solid fa-link",
+                customImg: null
+            };
+
+            const commitSave = () => {
+                appData.socials = appData.socials || [];
+                appData.socials.push(newSocial);
+                renderSocials();
+                closeAddSocialModal();
+                document.getElementById('socialNameInput').value = '';
+                document.getElementById('socialUrlInput').value = '';
+                document.getElementById('socialIconInput').value = '';
+                document.getElementById('socialImgFileInput').value = '';
+            };
+
+            if (imgFile.files && imgFile.files[0]) {
+                const r = new FileReader();
+                r.onload = function(evt) {
+                    newSocial.customImg = evt.target.result;
+                    commitSave();
+                };
+                r.readAsDataURL(imgFile.files[0]);
+            } else {
+                commitSave();
+            }
+        }
+
+        function deleteSocial(e, id) {
+            e.stopPropagation();
+            appData.socials = (appData.socials || []).filter(s => s.id !== id);
+            renderSocials();
+        }
+
+        function openAddModal(type, targetFolderId = null) {
+            document.getElementById('addItemType').value = type;
+            document.getElementById('addItemFolderId').value = targetFolderId || '';
+            const categoryGroup = document.getElementById('categorySelectGroup');
+
+            if (type === 'project') {
+                document.getElementById('addModalTitle').innerText = 'Add Project';
+                categoryGroup.classList.add('hidden');
+            } else if (type === 'experience') {
+                document.getElementById('addModalTitle').innerText = 'Add Experience Record';
+                categoryGroup.classList.remove('hidden');
+            } else {
+                document.getElementById('addModalTitle').innerText = 'Add File / Additional Note';
+                categoryGroup.classList.add('hidden');
+            }
+
+            document.getElementById('addModal').classList.remove('hidden');
+        }
+
+        function closeAddModal() {
+            document.getElementById('addModal').classList.add('hidden');
+        }
+
+        function saveNewItem(e) {
+            e.preventDefault();
+            const type = document.getElementById('addItemType').value;
+            const folderId = document.getElementById('addItemFolderId').value;
+            const title = document.getElementById('itemTitle').value;
+            const subCat = document.getElementById('itemCategorySelect').value;
+            const desc = document.getElementById('itemDesc').value;
+            const code = document.getElementById('itemCode').value;
+
+            const imgInput = document.getElementById('itemImgAttach');
+            const fileInput = document.getElementById('itemFileAttach');
+
+            const newItem = {
+                id: Date.now(),
+                folderId: folderId || null,
+                title,
+                desc,
+                code: code || null,
+                category: subCat
+            };
+
+            const processSave = () => {
+                if (type === 'project') {
+                    appData.projects.unshift(newItem);
+                    renderProjects();
+                } else if (type === 'experience') {
+                    appData.experiences.unshift(newItem);
+                    renderExperiences();
+                } else {
+                    appData.additionals.unshift(newItem);
+                    renderAdditionals();
+                }
+
+                closeAddModal();
+                document.getElementById('itemTitle').value = '';
+                document.getElementById('itemDesc').value = '';
+                document.getElementById('itemCode').value = '';
+                document.getElementById('itemImgAttach').value = '';
+                document.getElementById('itemFileAttach').value = '';
+            };
+
+            if (imgInput.files && imgInput.files[0]) {
+                const r = new FileReader();
+                r.onload = function(evt) {
+                    newItem.image = evt.target.result;
+                    if (fileInput.files && fileInput.files[0]) {
+                        newItem.fileName = fileInput.files[0].name;
+                        newItem.fileUrl = URL.createObjectURL(fileInput.files[0]);
+                    }
+                    processSave();
+                };
+                r.readAsDataURL(imgInput.files[0]);
+            } else {
+                if (fileInput.files && fileInput.files[0]) {
+                    newItem.fileName = fileInput.files[0].name;
+                    newItem.fileUrl = URL.createObjectURL(fileInput.files[0]);
+                }
+                processSave();
+            }
+        }
+
+        function deleteProject(id) {
+            appData.projects = appData.projects.filter(p => p.id !== id);
+            renderProjects();
+        }
+
+        function deleteExperience(id) {
+            appData.experiences = appData.experiences.filter(e => e.id !== id);
+            renderExperiences();
+        }
+
+        function deleteAdditional(id) {
+            appData.additionals = appData.additionals.filter(a => a.id !== id);
+            renderAdditionals();
+        }
+
+        // --- HARDSKILL MANAGEMENT ---
+        function openAddSkillModal() {
+            document.getElementById('addSkillModal').classList.remove('hidden');
+        }
+
+        function closeAddSkillModal() {
+            document.getElementById('addSkillModal').classList.add('hidden');
+        }
+
+        function saveNewSkill(e) {
+            e.preventDefault();
+            const name = document.getElementById('skillName').value;
+            const icon = document.getElementById('skillIcon').value;
+            const imgFile = document.getElementById('skillImgFileInput');
+
+            const newSkill = {
+                id: Date.now(),
+                name,
+                icon: icon || "fa-solid fa-code",
+                customImg: null
+            };
+
+            const commitSkill = () => {
+                appData.hardskills = appData.hardskills || [];
+                appData.hardskills.push(newSkill);
+                renderHardskills();
+                closeAddSkillModal();
+                document.getElementById('skillName').value = '';
+                document.getElementById('skillIcon').value = '';
+                document.getElementById('skillImgFileInput').value = '';
+            };
+
+            if (imgFile.files && imgFile.files[0]) {
+                const r = new FileReader();
+                r.onload = function(evt) {
+                    newSkill.customImg = evt.target.result;
+                    commitSkill();
+                };
+                r.readAsDataURL(imgFile.files[0]);
+            } else {
+                commitSkill();
+            }
+        }
+
+        function deleteSkill(id) {
+            appData.hardskills = appData.hardskills.filter(s => s.id !== id);
+            renderHardskills();
+        }
+
+        // --- GUESTBOOK ---
+        function submitGuestbook(e) {
+            e.preventDefault();
+            const name = document.getElementById('gbName').value;
+            const message = document.getElementById('gbMessage').value;
+
+            appData.guestbook.unshift({
+                id: Date.now(),
+                name,
+                message,
+                time: "Just now",
+                reply: null
+            });
+
+            renderGuestbook();
+            document.getElementById('gbName').value = '';
+            document.getElementById('gbMessage').value = '';
+        }
+
+        function replyGuestbook(id) {
+            const reply = prompt("Reply as Jeffrey:");
+            if (reply) {
+                const item = appData.guestbook.find(g => g.id === id);
+                if (item) {
+                    item.reply = reply;
+                    renderGuestbook();
+                }
+            }
+        }
+
+        function deleteGuestbook(id) {
+            appData.guestbook = appData.guestbook.filter(g => g.id !== id);
+            renderGuestbook();
+        }
+    </script>
+</body>
+</html>
